@@ -1,78 +1,220 @@
+import type { GetServerSideProps, InferGetServerSidePropsType } from "next";
+import Head from "next/head";
 import Image from "next/image";
-import { Geist, Geist_Mono } from "next/font/google";
+import Link from "next/link";
+import { getArticles, getCategories } from "@/lib/api";
+import type { Article, Category } from "@/lib/api";
+import ArticleCard from "@/components/article/ArticleCard";
+import AdBillboard from "@/components/ads/AdBillboard.client";
+import AdMediumRect from "@/components/ads/AdMediumRect.client";
+import AdInFeed from "@/components/ads/AdInFeed.client";
+import Header from "@/components/layout/Header";
+import Footer from "@/components/layout/Footer";
+import { formatDate } from "@/utils/formatDate";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
+/**
+ * Menyisipkan slot iklan setiap `every` artikel.
+ * AdSense menentukan konten iklan otomatis — tidak perlu variant manual.
+ */
+function buildFeedItems(articles: Article[], every: number = 3) {
+  const items: Array<
+    | { kind: "article"; data: Article }
+    | { kind: "ad" }
+  > = [];
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+  articles.forEach((article, index) => {
+    items.push({ kind: "article", data: article });
+    // Sisipkan slot iklan setiap N artikel (tidak setelah artikel terakhir)
+    if ((index + 1) % every === 0 && index + 1 < articles.length) {
+      items.push({ kind: "ad" });
+    }
+  });
 
-export default function Home() {
+  return items;
+}
+
+type Props = {
+  articlesRes: Awaited<ReturnType<typeof getArticles>>;
+  categories: Category[];
+  search: string | null;
+};
+
+export default function HomePage({
+  articlesRes,
+  categories,
+  search,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) {
+  const articles = articlesRes.data;
+
+  // Saat mode pencarian aktif: semua hasil masuk grid (tidak ada hero)
+  // Saat mode normal: artikel pertama jadi hero, sisanya (index 1-6) masuk grid
+  const featuredArticle = search ? null : articles[0];
+  const gridArticles = search ? articles : articles.slice(1, 7);
+
+  const feedItems = buildFeedItems(gridArticles, 3);
+
   return (
-    <div
-      className={`${geistSans.className} ${geistMono.className} flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black`}
-    >
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the index.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <>
+      <Head>
+        <title>Beranda | PortalNews</title>
+        <meta name="description" content="Baca berita terkini dari berbagai kategori" />
+      </Head>
+
+      <Header categories={categories} />
+
+      <div className="max-w-6xl mx-auto px-4 py-8 space-y-8">
+        {/* ── HERO SECTION ───────────────────────────── */}
+        {featuredArticle && (
+          <section>
+            <Link href={`/berita/${featuredArticle.slug}`}>
+              <div className="relative w-full h-[420px] rounded-2xl overflow-hidden group">
+                {featuredArticle.thumbnail ? (
+                  <Image
+                    src={featuredArticle.thumbnail}
+                    alt={featuredArticle.title}
+                    fill
+                    priority
+                    sizes="(max-width: 1152px) 100vw, 1152px"
+                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-gray-300 flex items-center justify-center text-gray-500 text-lg">
+                    No Image
+                  </div>
+                )}
+                {/* Overlay gelap di bawah agar teks terbaca */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+
+                {/* Teks di atas gambar */}
+                <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+                  <span
+                    className="inline-block bg-blue-600 text-xs font-semibold 
+                                   px-3 py-1 rounded-full mb-3"
+                  >
+                    {featuredArticle.category.name}
+                  </span>
+                  <h1
+                    className="text-2xl md:text-3xl font-bold leading-tight 
+                               line-clamp-2 mb-2"
+                  >
+                    {featuredArticle.title}
+                  </h1>
+                  <div className="flex items-center gap-3 text-white/70 text-sm">
+                    <span>{featuredArticle.author}</span>
+                    <span>•</span>
+                    <span>{formatDate(featuredArticle.publishedAt)}</span>
+                  </div>
+                </div>
+              </div>
+            </Link>
+          </section>
+        )}
+
+        {/* ── BILLBOARD AD (di bawah hero, sebelum filter) ── */}
+        {!search && <AdBillboard />}
+
+        {/* ── FILTER KATEGORI ────────────────────────── */}
+        <section>
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="text-sm font-semibold text-gray-500 mr-2">
+              Kategori:
+            </span>
+            {categories.map((cat) => (
+              <Link
+                key={cat.id}
+                href={`/kategori/${cat.slug}`}
+                className="px-4 py-1.5 rounded-full border border-gray-200 text-sm
+                           text-gray-600 hover:bg-blue-600 hover:text-white 
+                           hover:border-blue-600 transition-all"
+              >
+                {cat.name}
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        {/* ── MAIN CONTENT + SIDEBAR (2 kolom) ────────── */}
+        <div className="flex flex-col lg:flex-row gap-8 items-start">
+
+          {/* ── LEFT: Artikel Grid ───────────────────── */}
+          <section className="flex-1 min-w-0 space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-bold text-gray-900">
+                {search ? (
+                  <>
+                    Hasil pencarian untuk{" "}
+                    <span className="text-blue-600">&ldquo;{search}&rdquo;</span>
+                  </>
+                ) : (
+                  "Artikel Terbaru"
+                )}
+              </h2>
+              <div className="flex items-center gap-3">
+                <span className="text-sm text-gray-400">
+                  {articlesRes.meta.total} artikel tersedia
+                </span>
+                {search && (
+                  <Link
+                    href="/"
+                    className="text-sm text-blue-600 hover:underline"
+                  >
+                    ✕ Hapus filter
+                  </Link>
+                )}
+              </div>
+            </div>
+
+            {feedItems.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                {feedItems.map((item, index) =>
+                  item.kind === "article" ? (
+                    <ArticleCard key={item.data.id} article={item.data} />
+                  ) : (
+                    <AdInFeed key={`ad-infeed-${index}`} />
+                  )
+                )}
+              </div>
+            ) : (
+              <p className="text-gray-400 text-center py-12">
+                {search
+                  ? `Tidak ada artikel yang cocok dengan "${search}".`
+                  : "Belum ada artikel tersedia."}
+              </p>
+            )}
+          </section>
+
+          {/* ── RIGHT: Sidebar ───────────────────────── */}
+          {!search && (
+            <aside className="w-full lg:w-[300px] shrink-0 space-y-6">
+              {/* Medium Rectangle Ad #1 */}
+              <AdMediumRect />
+
+              {/* Medium Rectangle Ad #2 (slot yang sama, AdSense rotate otomatis) */}
+              <AdMediumRect />
+            </aside>
+          )}
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs/pages/getting-started?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+      </div>
+
+      <Footer />
+    </>
   );
 }
+
+export const getServerSideProps: GetServerSideProps<Props> = async ({ query }) => {
+  const search = query.search as string | undefined;
+
+  // Fetch 2 data sekaligus secara paralel — identik dengan sumber
+  const [articlesRes, categories] = await Promise.all([
+    getArticles({ search }),
+    getCategories(),
+  ]);
+
+  return {
+    props: {
+      articlesRes,
+      categories,
+      search: search ?? null,
+    },
+  };
+};
