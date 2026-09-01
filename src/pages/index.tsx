@@ -37,14 +37,21 @@ type Props = {
   articlesRes: Awaited<ReturnType<typeof getArticles>>;
   categories: Category[];
   search: string | null;
+  category: string | null;
 };
 
 export default function HomePage({
   articlesRes,
   categories,
   search,
+  category,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const articles = articlesRes.data;
+
+  // Nama kategori aktif (untuk heading grid)
+  const activeCategory = category
+    ? categories.find((c) => c.slug === category) ?? null
+    : null;
 
   // Saat mode pencarian aktif: semua hasil masuk grid (tidak ada hero)
   // Saat mode normal: artikel pertama jadi hero, sisanya (index 1-6) masuk grid
@@ -119,17 +126,35 @@ export default function HomePage({
             <span className="text-sm font-semibold text-gray-500 mr-2">
               Kategori:
             </span>
-            {categories.map((cat) => (
-              <Link
-                key={cat.id}
-                href={`/kategori/${cat.slug}`}
-                className="px-4 py-1.5 rounded-full border border-gray-200 text-sm
-                           text-gray-600 hover:bg-blue-600 hover:text-white 
-                           hover:border-blue-600 transition-all"
-              >
-                {cat.name}
-              </Link>
-            ))}
+
+            {/* Pill "Semua" — reset filter */}
+            <Link
+              href="/"
+              className={`px-4 py-1.5 rounded-full border text-sm font-medium transition-all ${
+                !category
+                  ? "bg-blue-600 text-white border-blue-600"
+                  : "border-gray-200 text-gray-600 hover:bg-blue-600 hover:text-white hover:border-blue-600"
+              }`}
+            >
+              Semua
+            </Link>
+
+            {categories.map((cat) => {
+              const isActive = cat.slug === category;
+              return (
+                <Link
+                  key={cat.id}
+                  href={`/?category=${cat.slug}`}
+                  className={`px-4 py-1.5 rounded-full border text-sm font-medium transition-all ${
+                    isActive
+                      ? "bg-blue-600 text-white border-blue-600"
+                      : "border-gray-200 text-gray-600 hover:bg-blue-600 hover:text-white hover:border-blue-600"
+                  }`}
+                >
+                  {cat.name}
+                </Link>
+              );
+            })}
           </div>
         </section>
 
@@ -145,6 +170,11 @@ export default function HomePage({
                     Hasil pencarian untuk{" "}
                     <span className="text-blue-600">&ldquo;{search}&rdquo;</span>
                   </>
+                ) : activeCategory ? (
+                  <>
+                    Kategori:{" "}
+                    <span className="text-blue-600">{activeCategory.name}</span>
+                  </>
                 ) : (
                   "Artikel Terbaru"
                 )}
@@ -153,7 +183,7 @@ export default function HomePage({
                 <span className="text-sm text-gray-400">
                   {articlesRes.meta.total} artikel tersedia
                 </span>
-                {search && (
+                {(search || category) && (
                   <Link
                     href="/"
                     className="text-sm text-blue-600 hover:underline"
@@ -203,10 +233,11 @@ export default function HomePage({
 
 export const getServerSideProps: GetServerSideProps<Props> = async ({ query }) => {
   const search = query.search as string | undefined;
+  const category = query.category as string | undefined;
 
-  // Fetch 2 data sekaligus secara paralel — identik dengan sumber
+  // Fetch 2 data sekaligus secara paralel
   const [articlesRes, categories] = await Promise.all([
-    getArticles({ search }),
+    getArticles({ search, category }),
     getCategories(),
   ]);
 
@@ -215,6 +246,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ query }) =
       articlesRes,
       categories,
       search: search ?? null,
+      category: category ?? null,
     },
   };
 };

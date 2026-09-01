@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Heart } from "lucide-react";
 
 type Props = {
@@ -12,6 +12,15 @@ export default function LikeButton({ articleId, initialLikes }: Props) {
   const [likes, setLikes] = useState(initialLikes);
   const [loading, setLoading] = useState(false);
   const [liked, setLiked] = useState(false);
+
+  const storageKey = `liked_article_${articleId}`;
+
+  // Baca status liked dari localStorage saat komponen mount
+  // (localStorage adalah browser-only API — wajib di dalam useEffect)
+  useEffect(() => {
+    const stored = localStorage.getItem(storageKey);
+    if (stored === "true") setLiked(true);
+  }, [storageKey]);
 
   async function handleLike() {
     if (loading) return;
@@ -25,6 +34,8 @@ export default function LikeButton({ articleId, initialLikes }: Props) {
         const data = await res.json();
         setLikes(data.likes ?? likes + 1);
         setLiked(true);
+        // Simpan ke localStorage agar persisten setelah refresh
+        localStorage.setItem(storageKey, "true");
       }
     } catch (error) {
       console.error("Gagal menyukai artikel:", error);

@@ -3,7 +3,9 @@
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { Category } from "@/lib/api";
-import { Menu, X, Search } from "lucide-react";
+import { Menu, X } from "lucide-react";
+import SearchBar from "@/components/layout/SearchBar.client";
+
 
 type Props = {
   categories: Category[];
@@ -53,17 +55,9 @@ export default function MobileNav({ categories }: Props) {
                     shadow-xl transition-all duration-300 ease-in-out
                     ${isOpen ? "translate-y-0 opacity-100" : "-translate-y-4 opacity-0 pointer-events-none"}`}
       >
-        {/* Search bar */}
+        {/* Search bar — reuse SearchBar.client.tsx yang sudah berfungsi */}
         <div className="px-4 pt-4 pb-2">
-          <div className="flex items-center gap-2 bg-gray-50 rounded-lg px-3 py-2.5">
-            <Search size={18} className="text-gray-400 shrink-0" />
-            <input
-              type="text"
-              placeholder="Cari artikel..."
-              className="bg-transparent text-sm text-gray-700 placeholder-gray-400
-                         outline-none w-full"
-            />
-          </div>
+          <SearchBar alwaysExpanded onSearch={closeMenu} />
         </div>
 
         {/* Navigation links */}

@@ -83,7 +83,7 @@ export function sanitizeContent(html: string): string {
 export async function getCategories(): Promise<Category[]> {
   try {
     const res = await fetch(`${BASE_URL}/categories`, {
-      next: { revalidate: 3600 },
+      cache: "no-store",
     });
     if (!res.ok) throw new Error("Gagal mengambil kategori");
     const json: ApiResponse<Category[]> = await res.json();
@@ -99,7 +99,7 @@ export async function getCategoryBySlug(
 ): Promise<Category | null> {
   try {
     const res = await fetch(`${BASE_URL}/categories/${slug}`, {
-      next: { revalidate: 3600 },
+      cache: "no-store",
     });
 
     if (res.status === 404 || !res.ok) return null;
@@ -139,7 +139,7 @@ export async function getArticles(
 
     const queryString = query.toString();
     const url = `${BASE_URL}/articles${queryString ? `?${queryString}` : ""}`;
-    const res = await fetch(url, { next: { revalidate: 60 } });
+    const res = await fetch(url, { cache: "no-store" });
     if (!res.ok) return emptyResponse;
     return await res.json();
   } catch (error) {
@@ -151,7 +151,7 @@ export async function getArticles(
 export async function getArticleBySlug(slug: string): Promise<Article | null> {
   try {
     const res = await fetch(`${BASE_URL}/articles/${slug}`, {
-      next: { revalidate: 60 },
+      cache: "no-store",
     });
     if (res.status === 404 || !res.ok) return null;
     const json: ApiResponse<Article> = await res.json();
@@ -166,7 +166,7 @@ export async function getArticleBySlug(slug: string): Promise<Article | null> {
 export async function getComments(articleId: number): Promise<Comment[]> {
   try {
     const res = await fetch(`${BASE_URL}/comments/${articleId}`, {
-      next: { revalidate: 30 },
+      cache: "no-store",
     });
     if (!res.ok) return [];
     const json: ApiResponse<Comment[]> = await res.json();

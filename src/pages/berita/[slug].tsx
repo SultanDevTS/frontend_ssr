@@ -140,7 +140,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ params }) 
   const plainText =
     article.content?.replace(/<[^>]*>/g, "").slice(0, 160) ?? "";
 
-  // JSON-LD Structured Data — identik dengan sumber
+  // JSON-LD Structured Data 
   const jsonLdData = {
     "@context": "https://schema.org",
     "@type": "NewsArticle",
@@ -165,8 +165,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ params }) 
     articleSection: article.category.name,
   };
 
-  // Fetch paralel: categories (BARU — untuk Header), comments (dipindahkan dari CommentSection),
-  // relatedArticles (dipindahkan dari RelatedArticles)
+
   const [categories, comments, relatedArticles] = await Promise.all([
     getCategories(),
     getComments(article.id),

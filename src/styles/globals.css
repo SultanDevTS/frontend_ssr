@@ -24,3 +24,110 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* ── Article Body Typography ─────────────────────────────────────────────── */
+.article-body {
+  color: #1a1a2e;
+  font-size: 1.0625rem;   /* 17px */
+  line-height: 1.85;
+  font-feature-settings: "kern" 1, "liga" 1;
+}
+
+/* Paragraf biasa */
+.article-body p {
+  margin-bottom: 1.4em;
+}
+
+/* Drop cap pada paragraf pertama */
+.article-body > p:first-of-type::first-letter {
+  float: left;
+  font-size: 3.6em;
+  line-height: 0.82;
+  margin-right: 0.08em;
+  margin-top: 0.05em;
+  font-weight: 800;
+  color: #2563eb;
+}
+
+/* Blockquote — kutipan langsung narasumber */
+.article-body blockquote {
+  position: relative;
+  background: linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%);
+  border-left: 4px solid #2563eb;
+  border-radius: 0 0.75rem 0.75rem 0;
+  padding: 1rem 1.25rem 1rem 1.5rem;
+  margin: 1.75em 0;
+  font-style: italic;
+  color: #374151;
+}
+
+.article-body blockquote::before {
+  content: '\201C';
+  position: absolute;
+  top: -0.2rem;
+  left: 0.75rem;
+  font-size: 3rem;
+  line-height: 1;
+  color: #2563eb;
+  opacity: 0.25;
+  font-family: Georgia, serif;
+}
+
+/* Heading di dalam konten artikel */
+.article-body h2 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 2em 0 0.6em;
+  padding-bottom: 0.35em;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.article-body h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 1.6em 0 0.5em;
+}
+
+/* Figure / Image caption */
+.article-body figure {
+  margin: 2em 0;
+  text-align: center;
+}
+
+.article-body figcaption {
+  margin-top: 0.5em;
+  font-size: 0.8125rem;
+  color: #6b7280;
+  font-style: italic;
+}
+
+/* Link di dalam konten */
+.article-body a {
+  color: #2563eb;
+  text-decoration: underline;
+  text-decoration-color: #93c5fd;
+  text-underline-offset: 2px;
+  transition: color 0.15s, text-decoration-color 0.15s;
+}
+
+.article-body a:hover {
+  color: #1d4ed8;
+  text-decoration-color: #2563eb;
+}
+
+/* Bold / strong */
+.article-body strong,
+.article-body b {
+  font-weight: 700;
+  color: #111827;
+}
+
+/* Iframe (video embed) */
+.article-body iframe {
+  width: 100%;
+  border-radius: 0.75rem;
+  margin: 1.5em 0;
+  aspect-ratio: 16 / 9;
+}

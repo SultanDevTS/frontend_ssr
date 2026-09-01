@@ -5,6 +5,29 @@
 
 import type { GetServerSideProps } from "next";
 import { getArticles, getCategories } from "@/lib/api";
+import type { Article } from "@/lib/api";
+
+/**
+ * Mengambil SELURUH artikel dari API dengan pagination loop.
+ * Aman untuk artikel berapapun — tidak tergantung pada limit hardcode.
+ */
+async function fetchAllArticles(): Promise<Article[]> {
+  const PAGE_SIZE = 100;
+  const allArticles: Article[] = [];
+  let currentPage = 1;
+
+  while (true) {
+    const res = await getArticles({ page: currentPage, limit: PAGE_SIZE });
+
+    allArticles.push(...res.data);
+
+    if (currentPage >= res.meta.totalPages) break;
+
+    currentPage++;
+  }
+
+  return allArticles;
+}
 
 export default function Sitemap() {
   return null;
@@ -13,13 +36,13 @@ export default function Sitemap() {
 export const getServerSideProps: GetServerSideProps = async ({ res }) => {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
-  // Fetch semua data untuk sitemap — identik dengan sumber
-  const [articlesRes, categories] = await Promise.all([
-    getArticles({ limit: 1000 }),
+  // Fetch semua data untuk sitemap secara paralel
+  const [allArticles, categories] = await Promise.all([
+    fetchAllArticles(),
     getCategories(),
   ]);
 
-  // Halaman statis — identik dengan sumber
+  // Halaman statis
   const staticPages = [
     {
       url: siteUrl,
@@ -29,7 +52,7 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
     },
   ];
 
-  // Halaman kategori — identik dengan sumber
+  // Halaman kategori
   const categoryPages = categories.map((cat) => ({
     url: `${siteUrl}/kategori/${cat.slug}`,
     lastModified: new Date().toISOString(),
@@ -37,8 +60,8 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
     priority: 0.8,
   }));
 
-  // Halaman artikel — identik dengan sumber
-  const articlePages = articlesRes.data.map((article) => ({
+  // Halaman artikel — sekarang mencakup SEMUA artikel, bukan hanya 1000 pertama
+  const articlePages = allArticles.map((article) => ({
     url: `${siteUrl}/berita/${article.slug}`,
     lastModified: new Date(article.publishedAt).toISOString(),
     changeFrequency: "weekly",

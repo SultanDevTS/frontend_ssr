@@ -1,4 +1,4 @@
-﻿import type { GetServerSideProps, InferGetServerSidePropsType } from "next";
+import type { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import Head from "next/head";
 import { getCategoryBySlug, getArticles, getCategories } from "@/lib/api";
 import type { Article, Category } from "@/lib/api";
@@ -33,7 +33,7 @@ type Props = {
   articlesRes: Awaited<ReturnType<typeof getArticles>>;
   categories: Category[];
   currentPage: number;
-  sort: string | undefined;
+  sort: string | null;
 };
 
 export default function KategoriPage({
@@ -44,7 +44,7 @@ export default function KategoriPage({
   sort,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const articles = articlesRes.data;
-  const feedItems = buildFeedItems(articles, 3);
+  const feedItems = buildFeedItems(articles, 6);
 
   // Preserve search params for pagination links (tanpa page)
   const paginationParams: Record<string, string> = {};
@@ -94,7 +94,9 @@ export default function KategoriPage({
                   item.kind === "article" ? (
                     <ArticleCard key={item.data.id} article={item.data} />
                   ) : (
-                    <AdInFeed key={`ad-infeed-${index}`} />
+                    <div key={`ad-infeed-${index}`} className="col-span-full">
+                      <AdInFeed />
+                    </div>
                   )
                 )}
               </div>

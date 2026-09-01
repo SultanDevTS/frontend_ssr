@@ -2,10 +2,20 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 import { Search } from "lucide-react";
 
-export default function SearchBar() {
+type Props = {
+  /** Jika true, input selalu terlihat tanpa perlu klik ikon (untuk mobile nav) */
+  alwaysExpanded?: boolean;
+  /** Callback yang dipanggil setelah search disubmit (misal: tutup menu) */
+  onSearch?: () => void;
+};
+
+export default function SearchBar({ alwaysExpanded = false, onSearch }: Props) {
   const [query, setQuery] = useState("");
   const [isExpanded, setIsExpanded] = useState(false);
   const router = useRouter();
+
+  // Tampilkan input jika: mode alwaysExpanded ATAU user sudah klik ikon
+  const showInput = alwaysExpanded || isExpanded;
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -14,34 +24,38 @@ export default function SearchBar() {
       router.push(`/?search=${encodeURIComponent(trimmed)}`);
       setQuery("");
       setIsExpanded(false);
+      onSearch?.(); // Tutup menu mobile jika ada callback
     }
   }
 
   return (
     <>
-      {isExpanded ? (
+      {showInput ? (
         <form onSubmit={handleSubmit} className="flex items-center gap-2">
           <input
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Cari artikel..."
-            autoFocus
-            className="w-44 px-3 py-2 text-sm border border-gray-200 rounded-lg
+            autoFocus={!alwaysExpanded} // autoFocus hanya saat expand dari ikon desktop
+            className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg
                        focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
                        bg-white text-gray-700 placeholder-gray-400"
           />
-          <button
-            type="button"
-            onClick={() => {
-              setIsExpanded(false);
-              setQuery("");
-            }}
-            className="text-gray-400 hover:text-gray-600 text-sm"
-            aria-label="Tutup pencarian"
-          >
-            ✕
-          </button>
+          {/* Tombol tutup hanya di mode desktop (bukan alwaysExpanded) */}
+          {!alwaysExpanded && (
+            <button
+              type="button"
+              onClick={() => {
+                setIsExpanded(false);
+                setQuery("");
+              }}
+              className="text-gray-400 hover:text-gray-600 text-sm"
+              aria-label="Tutup pencarian"
+            >
+              ✕
+            </button>
+          )}
         </form>
       ) : (
         <button
