@@ -2,7 +2,7 @@
 // Billboard / Leaderboard: 728×90 — di bawah hero dan atas halaman kategori
 
 import AdLabel from "@/components/ads/AdLabel";
-import AdSlot from "@/components/ads/AdSlot.client";
+import AdSlot from "@/components/ads/AdSlot";
 
 export default function AdBillboard() {
   return (

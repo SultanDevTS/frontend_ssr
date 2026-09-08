@@ -2,7 +2,7 @@
 // In-feed native ad: disisipkan di dalam grid artikel
 
 import AdLabel from "@/components/ads/AdLabel";
-import AdSlot from "@/components/ads/AdSlot.client";
+import AdSlot from "@/components/ads/AdSlot";
 
 export default function AdInFeed() {
   return (

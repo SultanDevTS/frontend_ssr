@@ -1,10 +1,8 @@
-'use client';
-
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { Category } from "@/lib/api";
 import { Menu, X } from "lucide-react";
-import SearchBar from "@/components/layout/SearchBar.client";
+import SearchBar from "@/components/layout/SearchBar";
 
 
 type Props = {

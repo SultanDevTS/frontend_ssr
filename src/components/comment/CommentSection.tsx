@@ -4,7 +4,7 @@
 
 import type { Comment } from "@/lib/api";
 import CommentList from "@/components/comment/CommentList";
-import CommentForm from "@/components/comment/CommentForm.client";
+import CommentForm from "@/components/comment/CommentForm";
 
 type Props = {
   articleId: number;

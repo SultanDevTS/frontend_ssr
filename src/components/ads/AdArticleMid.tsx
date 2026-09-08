@@ -2,7 +2,7 @@
 // Mid-article ad: tampil di tengah konten artikel detail
 
 import AdLabel from "@/components/ads/AdLabel";
-import AdSlot from "@/components/ads/AdSlot.client";
+import AdSlot from "@/components/ads/AdSlot";
 
 export default function AdArticleMid() {
   return (
