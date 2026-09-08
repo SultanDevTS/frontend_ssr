@@ -11,7 +11,9 @@ type Props = {
 };
 
 export default function MobileNav({ categories }: Props) {
-  const { pathname } = useRouter();
+  // asPath = URL aktual ("/kategori/nasional"), bukan template ("/kategori/[slug]")
+  // pathname di Page Router untuk dynamic routes = "/kategori/[slug]" → tidak bisa dipakai
+  const { asPath } = useRouter();
   const [isOpen, setIsOpen] = useState(false);
 
   const closeMenu = useCallback(() => setIsOpen(false), []);
@@ -68,7 +70,7 @@ export default function MobileNav({ categories }: Props) {
             className={`flex items-center gap-3 px-3 py-3 rounded-lg font-semibold
                         transition-colors
                         ${
-                          pathname === "/"
+                          asPath  === "/"
                             ? "bg-blue-50 text-blue-600"
                             : "text-gray-800 hover:bg-blue-50 hover:text-blue-600"
                         }`}
@@ -96,7 +98,7 @@ export default function MobileNav({ categories }: Props) {
           </div>
 
           {categories.map((cat) => {
-            const isActive = pathname === `/kategori/${cat.slug}`;
+            const isActive = asPath  === `/kategori/${cat.slug}`;
             return (
               <Link
                 key={cat.id}
