@@ -10,6 +10,11 @@ const nextConfig: NextConfig = {
         hostname: "localhost",
         port: "3008",
       },
+      // ── Backend production (VPS via domain) ──────────────
+      {
+        protocol: "https",
+        hostname: "news.beritauptodate.my.id",
+      },
 
       // ── Sumber gambar artikel dari seeder data ────────────
       // Tambahkan hostname eksplisit sesuai sumber gambar yang digunakan di seeder.
