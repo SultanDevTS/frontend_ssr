@@ -11,7 +11,8 @@ const isAdSenseConfigured =
 
 const inter = Inter({
   subsets: ["latin"],
-  display: "swap", // CLS: mencegah layout shift saat font loading
+  display: "swap",  // CLS: mencegah layout shift saat font loading
+  preload: false,   // tidak download saat build, dimuat saat runtime
 });
 
 export default function App({ Component, pageProps }: AppProps) {

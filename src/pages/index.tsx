@@ -63,7 +63,7 @@ export default function HomePage({
   return (
     <>
       <Head>
-        <title>Beranda | PortalNews</title>
+        <title>Beranda | BeritaUpToDate</title>
         <meta name="description" content="Baca berita terkini dari berbagai kategori" />
       </Head>
 

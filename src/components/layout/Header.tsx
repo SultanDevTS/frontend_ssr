@@ -27,10 +27,10 @@ export default function Header({ categories }: Props) {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-1 shrink-0">
             <span className="text-2xl font-extrabold tracking-tight text-blue-600">
-              Portal
+              Berita
             </span>
             <span className="text-2xl font-extrabold tracking-tight text-gray-900">
-              News
+              UpToDate
             </span>
           </Link>
 
