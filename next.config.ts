@@ -8,8 +8,9 @@ const withBundleAnalyzer = bundleAnalyzer({
 
 const nextConfig: NextConfig = {
   output: "standalone",
-  basePath: "/ssr-app",
-  // Optimasi gambar dari domain eksternal (API backend)
+  //basePath: "/ssr-app",
+  
+// Optimasi gambar dari domain eksternal
   images: {
     remotePatterns: [
       // ── Backend development (localhost) ──────────────────

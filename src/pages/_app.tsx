@@ -7,7 +7,7 @@ import "@/styles/globals.css";
 const ADSENSE_PUB_ID = process.env.NEXT_PUBLIC_ADSENSE_PUB_ID ?? "";
 const isAdSenseConfigured =
   ADSENSE_PUB_ID.startsWith("ca-pub-") &&
-  ADSENSE_PUB_ID !== "ca-pub-XXXXXXXXXXXXXXXX";
+  ADSENSE_PUB_ID !== "ca-pub-2081905719548415";
 
 const inter = Inter({
   subsets: ["latin"],
