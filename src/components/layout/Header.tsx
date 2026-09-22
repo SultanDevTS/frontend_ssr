@@ -6,8 +6,8 @@ import Link from "next/link";
 import { type Category } from "@/lib/api";
 import { MAX_VISIBLE_CATEGORIES } from "@/lib/constants";
 import NavMenu from "@/components/layout/NavMenu";
-import SearchBar from "@/components/layout/SearchBar.client";
-import MobileNav from "@/components/layout/MobileNav.client";
+import SearchBar from "@/components/layout/SearchBar";
+import MobileNav from "@/components/layout/MobileNav";
 
 type Props = {
   categories: Category[];

@@ -1,10 +1,9 @@
-'use client';
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { Category } from "@/lib/api";
 import { Menu, X } from "lucide-react";
-import SearchBar from "@/components/layout/SearchBar.client";
+import SearchBar from "@/components/layout/SearchBar";
 
 
 type Props = {
@@ -33,7 +32,7 @@ export default function MobileNav({ categories }: Props) {
       {/* Hamburger button — only visible on mobile */}
       <button
         className="lg:hidden flex items-center justify-center w-10 h-10 rounded-lg
-                   text-gray-600 hover:bg-gray-100 transition-colors"
+        text-gray-600 hover:bg-gray-100 transition-colors"
         onClick={() => setIsOpen(!isOpen)}
         aria-label="Toggle menu"
         aria-expanded={isOpen}

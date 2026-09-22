@@ -1,4 +1,4 @@
-﻿import type { GetServerSideProps, InferGetServerSidePropsType } from "next";
+import type { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
@@ -7,17 +7,18 @@ import {
   getComments,
   getRelatedArticles,
   getCategories,
+  sanitizeContent,
 } from "@/lib/api";
 import type { Article, Category, Comment } from "@/lib/api";
 import ArticleHeader from "@/components/article/ArticleHeader";
 import ArticleContent from "@/components/article/ArticleContent";
-import ShareButton from "@/components/article/ShareButton.client";
-import LikeButton from "@/components/article/LikeButton.client";
+import ShareButton from "@/components/article/ShareButton";
+import LikeButton from "@/components/article/LikeButton";
 import RelatedArticles from "@/components/article/RelatedArticles";
 import CommentSection from "@/components/comment/CommentSection";
 import JsonLd from "@/components/ui/JsonLd";
-import AdArticleMid from "@/components/ads/AdArticleMid.client";
-import AdStickyFooter from "@/components/ads/AdStickyFooter.client";
+import AdArticleMid from "@/components/ads/AdArticleMid";
+import AdStickyFooter from "@/components/ads/AdStickyFooter";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 
@@ -136,6 +137,11 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ params }) 
   // Fetch artikel terlebih dahulu (notFound jika tidak ditemukan)
   const article = await getArticleBySlug(slug);
   if (!article) return { notFound: true };
+
+  // Sanitasi konten di server agar library sanitize-html tidak bocor ke client bundle
+  if (article.content) {
+    article.content = sanitizeContent(article.content);
+  }
 
   const plainText =
     article.content?.replace(/<[^>]*>/g, "").slice(0, 160) ?? "";

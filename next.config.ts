@@ -1,6 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  output: "standalone",
+
   // Optimasi gambar dari domain eksternal (API backend)
   images: {
     remotePatterns: [

@@ -1,6 +1,4 @@
-// components/article/ArticleContent.tsx — Page Router Component
 
-import { sanitizeContent } from "@/lib/api";
 
 type Props = {
   content: string;
@@ -58,8 +56,7 @@ function processContent(rawHtml: string): string {
 }
 
 export default function ArticleContent({ content }: Props) {
-  const safeContent = sanitizeContent(content);
-  const processedContent = processContent(safeContent);
+  const processedContent = processContent(content);
 
   return (
     <div
