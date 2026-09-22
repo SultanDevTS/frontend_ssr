@@ -1,7 +1,3 @@
-// components/layout/Header.tsx
-// Di Page Router: Header menerima categories sebagai prop dari getServerSideProps,
-// karena komponen tidak bisa async di Page Router.
-
 import Link from "next/link";
 import { type Category } from "@/lib/api";
 import { MAX_VISIBLE_CATEGORIES } from "@/lib/constants";
@@ -31,10 +27,10 @@ export default function Header({ categories }: Props) {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-1 shrink-0">
             <span className="text-2xl font-extrabold tracking-tight text-blue-600">
-              Portal
+              Berita
             </span>
             <span className="text-2xl font-extrabold tracking-tight text-gray-900">
-              News
+              UpToDate
             </span>
           </Link>
 

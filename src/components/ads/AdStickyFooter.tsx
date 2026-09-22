@@ -4,7 +4,7 @@
 
 import { useState, useEffect } from "react";
 import AdLabel from "@/components/ads/AdLabel";
-import AdSlot from "@/components/ads/AdSlot.client";
+import AdSlot from "@/components/ads/AdSlot";
 
 export default function AdStickyFooter() {
   const [visible, setVisible] = useState(false);

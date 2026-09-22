@@ -7,11 +7,12 @@ import "@/styles/globals.css";
 const ADSENSE_PUB_ID = process.env.NEXT_PUBLIC_ADSENSE_PUB_ID ?? "";
 const isAdSenseConfigured =
   ADSENSE_PUB_ID.startsWith("ca-pub-") &&
-  ADSENSE_PUB_ID !== "ca-pub-XXXXXXXXXXXXXXXX";
+  ADSENSE_PUB_ID !== "ca-pub-2081905719548415";
 
 const inter = Inter({
   subsets: ["latin"],
-  display: "swap", // CLS: mencegah layout shift saat font loading
+  display: "swap",  // CLS: mencegah layout shift saat font loading
+  preload: false,   // tidak download saat build, dimuat saat runtime
 });
 
 export default function App({ Component, pageProps }: AppProps) {

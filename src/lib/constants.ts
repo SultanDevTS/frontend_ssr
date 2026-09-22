@@ -1,5 +1,5 @@
 // ── Site Info ──────────────────────────────────────────────
-export const SITE_NAME = "PortalNews";
+export const SITE_NAME = "BeritaUpToDate";
 export const SITE_DESCRIPTION =
   "Portal berita terkini dan terpercaya dari berbagai kategori";
 

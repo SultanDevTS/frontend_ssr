@@ -2,7 +2,7 @@
 // Medium Rectangle: 300×250 — sidebar kanan
 
 import AdLabel from "@/components/ads/AdLabel";
-import AdSlot from "@/components/ads/AdSlot.client";
+import AdSlot from "@/components/ads/AdSlot";
 
 export default function AdMediumRect() {
   return (

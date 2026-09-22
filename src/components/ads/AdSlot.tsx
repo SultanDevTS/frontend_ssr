@@ -47,7 +47,7 @@ const PUB_ID = process.env.NEXT_PUBLIC_ADSENSE_PUB_ID ?? "";
 function isPubIdConfigured(pubId: string): boolean {
   return (
     pubId.startsWith("ca-pub-") &&
-    pubId !== "ca-pub-XXXXXXXXXXXXXXXX" &&
+    pubId !== "ca-pub-2081905719548415" &&
     pubId.length > 10
   );
 }

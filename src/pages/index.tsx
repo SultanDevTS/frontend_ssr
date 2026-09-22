@@ -63,7 +63,7 @@ export default function HomePage({
   return (
     <>
       <Head>
-        <title>Beranda | PortalNews</title>
+        <title>Beranda | BeritaUpToDate</title>
         <meta name="description" content="Baca berita terkini dari berbagai kategori" />
       </Head>
 
@@ -200,7 +200,11 @@ export default function HomePage({
                   item.kind === "article" ? (
                     <ArticleCard key={item.data.id} article={item.data} />
                   ) : (
-                    <AdInFeed key={`ad-infeed-${index}`} />
+                    // col-span-full: iklan span penuh horizontal, konsisten dengan halaman kategori
+                    // Memberi sinyal visual bahwa ini bukan konten artikel (design system)
+                    <div key={`ad-infeed-${index}`} className="col-span-full">
+                      <AdInFeed />
+                    </div>
                   )
                 )}
               </div>

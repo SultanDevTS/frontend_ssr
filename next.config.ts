@@ -1,9 +1,16 @@
 import type { NextConfig } from "next";
+import bundleAnalyzer from "@next/bundle-analyzer";
+
+const withBundleAnalyzer = bundleAnalyzer({
+  enabled: process.env.ANALYZE === "true",
+});
+
 
 const nextConfig: NextConfig = {
   output: "standalone",
-
-  // Optimasi gambar dari domain eksternal (API backend)
+  //basePath: "/ssr-app",
+  
+// Optimasi gambar dari domain eksternal
   images: {
     remotePatterns: [
       // ── Backend development (localhost) ──────────────────
@@ -12,21 +19,11 @@ const nextConfig: NextConfig = {
         hostname: "localhost",
         port: "3008",
       },
-
-      // ── Sumber gambar artikel dari seeder data ────────────
-      // Tambahkan hostname eksplisit sesuai sumber gambar yang digunakan di seeder.
-      // Hindari menggunakan hostname: "**" karena terlalu permisif di production.
-      //
-      // Contoh (aktifkan sesuai kebutuhan):
-      // {
-      //   protocol: "https",
-      //   hostname: "images.unsplash.com",
-      // },
-      // {
-      //   protocol: "https",
-      //   hostname: "upload.wikimedia.org",
-      // },
-
+      // ── Backend production (VPS via domain) ──────────────
+      {
+        protocol: "https",
+        hostname: "news.beritauptodate.my.id",
+      },
       // ── TODO: Tambahkan domain CDN production di sini ─────
       // Setelah domain hosting gambar production diketahui,
       // daftarkan secara eksplisit dan hapus komentar ini.
@@ -83,4 +80,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default withBundleAnalyzer(nextConfig);

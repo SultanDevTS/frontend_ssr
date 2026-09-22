@@ -1,5 +1,5 @@
-
 import { useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/router";
 import Link from "next/link";
 import { Category } from "@/lib/api";
 import { Menu, X } from "lucide-react";
@@ -11,6 +11,9 @@ type Props = {
 };
 
 export default function MobileNav({ categories }: Props) {
+  // asPath = URL aktual ("/kategori/nasional"), bukan template ("/kategori/[slug]")
+  // pathname di Page Router untuk dynamic routes = "/kategori/[slug]" → tidak bisa dipakai
+  const { asPath } = useRouter();
   const [isOpen, setIsOpen] = useState(false);
 
   const closeMenu = useCallback(() => setIsOpen(false), []);
@@ -64,8 +67,13 @@ export default function MobileNav({ categories }: Props) {
           <Link
             href="/"
             onClick={closeMenu}
-            className="flex items-center gap-3 px-3 py-3 rounded-lg text-gray-800
-                       font-semibold hover:bg-blue-50 hover:text-blue-600 transition-colors"
+            className={`flex items-center gap-3 px-3 py-3 rounded-lg font-semibold
+                        transition-colors
+                        ${
+                          asPath  === "/"
+                            ? "bg-blue-50 text-blue-600"
+                            : "text-gray-800 hover:bg-blue-50 hover:text-blue-600"
+                        }`}
           >
             <svg
               className="w-5 h-5"
@@ -89,18 +97,30 @@ export default function MobileNav({ categories }: Props) {
             </span>
           </div>
 
-          {categories.map((cat) => (
-            <Link
-              key={cat.id}
-              href={`/kategori/${cat.slug}`}
-              onClick={closeMenu}
-              className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600
-                         hover:bg-blue-50 hover:text-blue-600 transition-colors text-sm font-medium"
-            >
-              <span className="w-2 h-2 rounded-full bg-gray-300" />
-              {cat.name}
-            </Link>
-          ))}
+          {categories.map((cat) => {
+            const isActive = asPath  === `/kategori/${cat.slug}`;
+            return (
+              <Link
+                key={cat.id}
+                href={`/kategori/${cat.slug}`}
+                onClick={closeMenu}
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg
+                            transition-colors text-sm
+                            ${
+                              isActive
+                                ? "bg-blue-50 text-blue-600 font-semibold"
+                                : "text-gray-600 font-medium hover:bg-blue-50 hover:text-blue-600"
+                            }`}
+              >
+                <span
+                  className={`w-2 h-2 rounded-full transition-colors ${
+                    isActive ? "bg-blue-500" : "bg-gray-300"
+                  }`}
+                />
+                {cat.name}
+              </Link>
+            );
+          })}
         </nav>
       </div>
     </>
