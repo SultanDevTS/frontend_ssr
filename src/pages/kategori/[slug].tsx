@@ -92,7 +92,7 @@ export default function KategoriPage({
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
                 {feedItems.map((item, index) =>
                   item.kind === "article" ? (
-                    <ArticleCard key={item.data.id} article={item.data} />
+                    <ArticleCard key={item.data.id} article={item.data} priority={index === 0}/>
                   ) : (
                     <div key={`ad-infeed-${index}`} className="col-span-full">
                       <AdInFeed />

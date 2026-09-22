@@ -8,22 +8,26 @@ import { formatDate } from "@/utils/formatDate";
 
 type Props = {
   article: Article;
+  priority?:boolean;
 };
 
-export default function ArticleCard({ article }: Props) {
+export default function ArticleCard({ article,priority=false }: Props) {
   return (
     <article
       className="bg-white rounded-xl overflow-hidden shadow-sm 
                         border border-gray-100 hover:shadow-md transition-shadow"
     >
       {/* Thumbnail */}
-      <Link href={`/berita/${article.slug}`}>
+      <Link href={`/berita/${article.slug}`} prefetch={false}>
         <div className="relative w-full h-48">
           {article.thumbnail ? (
             <Image
               src={article.thumbnail}
               alt={article.title}
               fill
+              // priority={priority}
+              // fetchPriority={priority?"high" : undefined}
+              // quality={70}
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
               className="object-cover"
             />
@@ -39,10 +43,10 @@ export default function ArticleCard({ article }: Props) {
         {/* CategoryBadge menerima { name, slug } — sesuai ArticleCategory */}
         <CategoryBadge category={article.category} />
 
-        <Link href={`/berita/${article.slug}`}>
+        <Link href={`/berita/${article.slug}`} prefetch={false}>
           <h2
             className="font-bold text-gray-900 text-base leading-snug
-                         hover:text-blue-600 transition-colors line-clamp-2"
+            hover:text-blue-600 transition-colors line-clamp-2"
           >
             {article.title}
           </h2>
