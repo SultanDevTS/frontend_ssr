@@ -11,6 +11,7 @@ export default function CategoryBadge({ category }: Props) {
   return (
     <Link
       href={`/kategori/${category.slug}`}
+      prefetch={false}
       className="inline-block bg-blue-100 text-blue-700 text-xs font-semibold px-3 py-1 rounded-full hover:bg-blue-200 transition-colors"
     >
       {category.name}

@@ -39,6 +39,7 @@ export default function Pagination({
       {currentPage > 1 ? (
         <Link
           href={buildHref(currentPage - 1)}
+          prefetch={false}
           className="flex items-center justify-center w-9 h-9 rounded-lg text-gray-500
                      hover:bg-blue-50 hover:text-blue-600 transition-colors"
           aria-label="Halaman sebelumnya"
@@ -56,6 +57,7 @@ export default function Pagination({
         <Link
           key={page}
           href={buildHref(page)}
+          prefetch={false}
           className={`flex items-center justify-center w-9 h-9 rounded-lg text-sm font-medium transition-colors
                       ${
                         page === currentPage
@@ -72,6 +74,7 @@ export default function Pagination({
       {currentPage < totalPages ? (
         <Link
           href={buildHref(currentPage + 1)}
+          prefetch={false}
           className="flex items-center justify-center w-9 h-9 rounded-lg text-gray-500
                      hover:bg-blue-50 hover:text-blue-600 transition-colors"
           aria-label="Halaman berikutnya"

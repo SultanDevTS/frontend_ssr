@@ -19,10 +19,16 @@ const nextConfig: NextConfig = {
         hostname: "localhost",
         port: "3008",
       },
+      // ── Backend Docker service (production) ──────────────
+      {
+        protocol: "http",
+        hostname: "backend",
+        port: "3008",
+      },
       // ── Backend production (VPS via domain) ──────────────
       {
         protocol: "https",
-        hostname: "news.beritauptodate.my.id",
+        hostname: "rsc.beritauptodate.my.id",
       },
       // ── TODO: Tambahkan domain CDN production di sini ─────
       // Setelah domain hosting gambar production diketahui,
@@ -38,9 +44,10 @@ const nextConfig: NextConfig = {
     ],
     // Format modern untuk performa LCP yang lebih baik
     formats: ["image/webp"],
+    qualities: [70, 75],   // ArticleCard uses quality={70}; 75 is Next.js default
     // Device sizes untuk responsive images (CLS optimization)
     deviceSizes: [640, 750, 828, 1080, 1200, 1920],
-    imageSizes: [16, 32, 48, 64, 96, 128, 256],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
   },
 
   // Compress response untuk performa lebih baik

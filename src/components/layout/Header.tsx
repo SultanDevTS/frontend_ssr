@@ -25,7 +25,7 @@ export default function Header({ categories }: Props) {
         {/* Main navbar row */}
         <div className="h-16 flex items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-1 shrink-0">
+          <Link href="/" prefetch={false} className="flex items-center gap-1 shrink-0">
             <span className="text-2xl font-extrabold tracking-tight text-blue-600">
               Berita
             </span>
@@ -38,6 +38,7 @@ export default function Header({ categories }: Props) {
           <nav className="hidden lg:flex items-center gap-1">
             <Link
               href="/"
+              prefetch={false}
               className="px-3 py-2 text-sm font-semibold text-gray-700 rounded-lg
                          hover:bg-blue-50 hover:text-blue-600 transition-all duration-200"
             >
@@ -85,6 +86,7 @@ export default function Header({ categories }: Props) {
                       <Link
                         key={cat.id}
                         href={`/kategori/${cat.slug}`}
+                        prefetch={false}
                         className="block px-4 py-2.5 text-sm text-gray-600
                                    hover:bg-blue-50 hover:text-blue-600 transition-colors"
                       >

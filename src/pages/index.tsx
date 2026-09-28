@@ -73,14 +73,15 @@ export default function HomePage({
         {/* ── HERO SECTION ───────────────────────────── */}
         {featuredArticle && (
           <section>
-            <Link href={`/berita/${featuredArticle.slug}`}>
+            <Link href={`/berita/${featuredArticle.slug}`} prefetch={false}>
               <div className="relative w-full h-[420px] rounded-2xl overflow-hidden group">
                 {featuredArticle.thumbnail ? (
                   <Image
                     src={featuredArticle.thumbnail}
                     alt={featuredArticle.title}
                     fill
-                    priority
+                    fetchPriority="high"
+                    loading="eager"
                     sizes="(max-width: 1152px) 100vw, 1152px"
                     className="object-cover group-hover:scale-105 transition-transform duration-500"
                   />
@@ -130,6 +131,7 @@ export default function HomePage({
             {/* Pill "Semua" — reset filter */}
             <Link
               href="/"
+              prefetch={false}
               className={`px-4 py-1.5 rounded-full border text-sm font-medium transition-all ${
                 !category
                   ? "bg-blue-600 text-white border-blue-600"
@@ -145,6 +147,7 @@ export default function HomePage({
                 <Link
                   key={cat.id}
                   href={`/?category=${cat.slug}`}
+                  prefetch={false}
                   className={`px-4 py-1.5 rounded-full border text-sm font-medium transition-all ${
                     isActive
                       ? "bg-blue-600 text-white border-blue-600"
@@ -186,6 +189,7 @@ export default function HomePage({
                 {(search || category) && (
                   <Link
                     href="/"
+                    prefetch={false}
                     className="text-sm text-blue-600 hover:underline"
                   >
                     ✕ Hapus filter

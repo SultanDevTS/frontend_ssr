@@ -87,7 +87,8 @@ export default function BeritaDetailPage({
               src={article.thumbnail}
               alt={article.title}
               fill
-              priority
+              fetchPriority="high"
+              loading="eager"
               sizes="(max-width: 896px) 100vw, 896px"
               className="object-cover"
             />
@@ -119,6 +120,7 @@ export default function BeritaDetailPage({
         <div className="pt-6 border-t border-gray-200">
           <Link
             href="/"
+            prefetch={false}
             className="text-blue-600 hover:text-blue-700 text-sm font-medium transition-colors"
           >
             ← Kembali ke Beranda

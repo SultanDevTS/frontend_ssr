@@ -78,37 +78,40 @@ export function sanitizeContent(html: string): string {
   return sanitize(html, SANITIZE_OPTIONS);
 }
 
-// ── API Functions (Server Component only) ─────────────────
+// ── API Functions (getServerSideProps only) ────────────────
+//
+// Error propagation rules (per PRD-ssr.md §12):
+//   HTTP 404  → return null  (route returns { notFound: true })
+//   HTTP 5xx  → throw Error  (Next.js error handling → _error.tsx)
+//   Network   → throw Error  (Next.js error handling → _error.tsx)
+//   Success   → return data
+//
+// catch TIDAK DIGUNAKAN — error harus propagate ke Next.js, bukan diubah
+// menjadi empty state di catch block.
 
 export async function getCategories(): Promise<Category[]> {
-  try {
-    const res = await fetch(`${BASE_URL}/categories`, {
-      cache: "no-store",
-    });
-    if (!res.ok) throw new Error("Gagal mengambil kategori");
-    const json: ApiResponse<Category[]> = await res.json();
-    return json.data || [];
-  } catch (error) {
-    console.error("[API Error] getCategories failed:", error);
-    return [];
+  const res = await fetch(`${BASE_URL}/categories`, {
+    cache: "no-store",
+  });
+  if (!res.ok) {
+    throw new Error(`[API] getCategories failed: HTTP ${res.status}`);
   }
+  const json: ApiResponse<Category[]> = await res.json();
+  return json.data || [];
 }
 
 export async function getCategoryBySlug(
   slug: string,
 ): Promise<Category | null> {
-  try {
-    const res = await fetch(`${BASE_URL}/categories/${slug}`, {
-      cache: "no-store",
-    });
-
-    if (res.status === 404 || !res.ok) return null;
-    const json: ApiResponse<Category> = await res.json();
-    return json.data;
-  } catch (error) {
-    console.error(`[API Error] getCategoryBySlug(${slug}) failed:`, error);
-    return null;
+  const res = await fetch(`${BASE_URL}/categories/${slug}`, {
+    cache: "no-store",
+  });
+  if (res.status === 404) return null;
+  if (!res.ok) {
+    throw new Error(`[API] getCategoryBySlug(${slug}) failed: HTTP ${res.status}`);
   }
+  const json: ApiResponse<Category> = await res.json();
+  return json.data;
 }
 
 // Article
@@ -123,79 +126,57 @@ type ArticleParams = {
 export async function getArticles(
   params: ArticleParams = {},
 ): Promise<PaginatedResponse<Article>> {
-  const emptyResponse: PaginatedResponse<Article> = {
-    success: false,
-    data: [],
-    meta: { total: 0, page: 1, limit: 10, totalPages: 0 },
-  };
+  const query = new URLSearchParams();
+  if (params.page) query.set("page", String(params.page));
+  if (params.limit) query.set("limit", String(params.limit));
+  if (params.search) query.set("search", String(params.search));
+  if (params.category) query.set("category", String(params.category));
+  if (params.sort) query.set("sort", String(params.sort));
 
-  try {
-    const query = new URLSearchParams();
-    if (params.page) query.set("page", String(params.page));
-    if (params.limit) query.set("limit", String(params.limit));
-    if (params.search) query.set("search", String(params.search));
-    if (params.category) query.set("category", String(params.category));
-    if (params.sort) query.set("sort", String(params.sort));
-
-    const queryString = query.toString();
-    const url = `${BASE_URL}/articles${queryString ? `?${queryString}` : ""}`;
-    const res = await fetch(url, { cache: "no-store" });
-    if (!res.ok) return emptyResponse;
-    return await res.json();
-  } catch (error) {
-    console.error("[API Error] getArticles failed:", error);
-    return emptyResponse;
+  const queryString = query.toString();
+  const url = `${BASE_URL}/articles${queryString ? `?${queryString}` : ""}`;
+  const res = await fetch(url, { cache: "no-store" });
+  if (!res.ok) {
+    throw new Error(`[API] getArticles failed: HTTP ${res.status}`);
   }
+  return res.json();
 }
 
 export async function getArticleBySlug(slug: string): Promise<Article | null> {
-  try {
-    const res = await fetch(`${BASE_URL}/articles/${slug}`, {
-      cache: "no-store",
-    });
-    if (res.status === 404 || !res.ok) return null;
-    const json: ApiResponse<Article> = await res.json();
-    return json.data;
-  } catch (error) {
-    console.error(`[API Error] getArticleBySlug(${slug}) failed:`, error);
-    return null;
+  const res = await fetch(`${BASE_URL}/articles/${slug}`, {
+    cache: "no-store",
+  });
+  if (res.status === 404) return null;
+  if (!res.ok) {
+    throw new Error(`[API] getArticleBySlug(${slug}) failed: HTTP ${res.status}`);
   }
+  const json: ApiResponse<Article> = await res.json();
+  return json.data;
 }
 
-// Comments (fetch di Server Component)
+// Comments (fetch di getServerSideProps)
 export async function getComments(articleId: number): Promise<Comment[]> {
-  try {
-    const res = await fetch(`${BASE_URL}/comments/${articleId}`, {
-      cache: "no-store",
-    });
-    if (!res.ok) return [];
-    const json: ApiResponse<Comment[]> = await res.json();
-    return json.data || [];
-  } catch (error) {
-    console.error(
-      `[API Error] getComments(${articleId}) failed:`,
-      error,
-    );
-    return [];
+  const res = await fetch(`${BASE_URL}/comments/${articleId}`, {
+    cache: "no-store",
+  });
+  if (!res.ok) {
+    throw new Error(`[API] getComments(${articleId}) failed: HTTP ${res.status}`);
   }
+  const json: ApiResponse<Comment[]> = await res.json();
+  return json.data || [];
 }
 
-// Related articles (fetch di Server Component)
+// Related articles (fetch di getServerSideProps)
 export async function getRelatedArticles(
   categorySlug: string,
   excludeSlug: string,
   limit: number = 3,
 ): Promise<Article[]> {
-  try {
-    const res = await getArticles({
-      category: categorySlug,
-      limit: limit + 1, // fetch extra in case current article is included
-    });
-    return res.data
-      .filter((article) => article.slug !== excludeSlug)
-      .slice(0, limit);
-  } catch (error) {
-    console.error("[API Error] getRelatedArticles failed:", error);
-    return [];
-  }
+  const res = await getArticles({
+    category: categorySlug,
+    limit: limit + 1, // fetch extra in case current article is included
+  });
+  return res.data
+    .filter((article) => article.slug !== excludeSlug)
+    .slice(0, limit);
 }

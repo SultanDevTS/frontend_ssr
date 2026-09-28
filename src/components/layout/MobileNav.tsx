@@ -66,6 +66,7 @@ export default function MobileNav({ categories }: Props) {
         <nav className="flex flex-col px-2 py-2 gap-0.5 max-h-[60vh] overflow-y-auto">
           <Link
             href="/"
+            prefetch={false}
             onClick={closeMenu}
             className={`flex items-center gap-3 px-3 py-3 rounded-lg font-semibold
                         transition-colors
@@ -103,6 +104,7 @@ export default function MobileNav({ categories }: Props) {
               <Link
                 key={cat.id}
                 href={`/kategori/${cat.slug}`}
+                prefetch={false}
                 onClick={closeMenu}
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-lg
                             transition-colors text-sm
