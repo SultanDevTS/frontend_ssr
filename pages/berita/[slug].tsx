@@ -14,6 +14,8 @@ import ArticleHeader from "@/components/article/ArticleHeader";
 import ArticleContent from "@/components/article/ArticleContent";
 import ShareButton from "@/components/article/ShareButton";
 import LikeButton from "@/components/article/LikeButton";
+import TextSizeControl from "@/components/article/TextSizeControl";
+import BookmarkButton from "@/components/article/BookmarkButton";
 import RelatedArticles from "@/components/article/RelatedArticle";
 import CommentSection from "@/components/comment/CommentSection";
 import JsonLd from "@/components/ui/JsonLd";
@@ -162,6 +164,21 @@ export default function BeritaDetailPage({
         {/* Mid Article Advertisement */}
         <AdArticleMid />
 
+        {/* Reading Toolbar: Pengaturan ukuran teks dan bookmark cepat */}
+        <div className="flex flex-wrap items-center justify-between gap-3 py-3 border-y border-gray-200">
+          <TextSizeControl />
+
+          <div className="flex items-center gap-2">
+            <BookmarkButton
+              articleId={article.id}
+              title={article.title}
+              slug={article.slug}
+            />
+
+            <ShareButton title={article.title} slug={article.slug} />
+          </div>
+        </div>
+
         {/* Article Content */}
         {article.content && <ArticleContent content={article.content} />}
 
@@ -170,6 +187,12 @@ export default function BeritaDetailPage({
           <LikeButton
             articleId={article.id}
             initialLikes={article.likes ?? 0}
+          />
+
+          <BookmarkButton
+            articleId={article.id}
+            title={article.title}
+            slug={article.slug}
           />
 
           <ShareButton title={article.title} slug={article.slug} />

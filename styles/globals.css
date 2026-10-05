@@ -3,9 +3,10 @@
 /* ── Article Body Typography ─────────────────────────────────────────────── */
 .article-body {
   color: #1a1a2e;
-  font-size: 1.0625rem;   /* 17px */
+  font-size: var(--article-font-size, 1.0625rem);   /* 17px default */
   line-height: 1.85;
   font-feature-settings: "kern" 1, "liga" 1;
+  transition: font-size 0.15s ease;
 }
 
 /* Paragraf biasa */
